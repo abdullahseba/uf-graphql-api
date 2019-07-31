@@ -16,14 +16,14 @@ class ServicesProvider
   {
     $container->extend('graphQLQueryFields', function ($fields, $c) {
       $new_fields = [
-        'tests' => [
+        'tesgts' => [
           'type' => TR::get('user'),
-          'description' => 'Returns user by id (in range of 1-5)',
+          'description' => 'reyraewyreahdfhdfah',
           'args' => [
             'id' => TR::nonNull(TR::id())
           ],
           'resolve' =>
-            "UserFrosting\Sprinkle\GraphQl\GraphQl\Resolver\UserResolver::resolve"
+          "UserFrosting\Sprinkle\GraphQl\GraphQl\Resolver\UserResolver::resolve"
         ]
       ];
       return array_merge($fields, $new_fields);
