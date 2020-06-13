@@ -5,7 +5,6 @@ use UserFrosting\Sprinkle\GraphQl\GraphQl\TypeRegistry as TR;
 
 return [
     'user' => [
-        // 'type' => TR::get('user'),
         'type' => TR::user(),
         'description' => 'Returns a user by id',
         'args' => [
@@ -28,6 +27,5 @@ return [
 
         ],
         'resolve' => "UserFrosting\Sprinkle\GraphQlApi\GraphQl\Resolver\UsersResolver::resolve"
-
     ],
 ];

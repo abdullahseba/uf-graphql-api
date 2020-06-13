@@ -13,40 +13,57 @@ use UserFrosting\Sprinkle\GraphQlApi\Authenticate\Exception\AuthExpiredException
 use UserFrosting\Sprinkle\Account\Database\Models\User as UserModel;
 use UserFrosting\Sprinkle\GraphQl\GraphQl\Resolver\Resolver;
 
-/**
- * GraphQL User type definition.
- *
- */
+
 class UsersResolver extends Resolver
 {
-    public static function resolve($source, $args, $context, $info)
+
+
+    public static function resolve($value, $args, $context, $info)
     {
         if (!$context['auth']->check()) {
             throw new AuthExpiredException();
         }
 
-        function ToCamelCase($string, $capitalizeFirstCharacter = false)
-        {
-            $str = str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
-            if (!$capitalizeFirstCharacter) {
-                $str[0] = strtolower($str[0]);
-            }
-            return $str;
+        self::$map = [
+            'userName' => 'user_name',
+            'firstName' => 'first_name',
+            'lastName'  => 'last_name',
+            'createdAt' => 'created_at',
+            'deletedAt' => 'deleted_at',
+            'isEnabled' => 'flag_enabled',
+            'isVerified' => 'flag_verified',
+            'groupId' => 'group_id',
+            'lastUpdated' => 'updated_at'
+        ];
+
+        //Stores the selected fields form the query.
+        $selectedFields = $info->getFieldSelection();
+
+        //Stores SELECT fields for DB query.
+        $select = array();
+        foreach (self::renameKeys($selectedFields, self::$map) as $key => $value) {
+            array_push($select, $key);
         }
 
+        //Temporary hack to remove 'roles' from main select fields and only query relation if required :(
+        $role = false;
+        $r_idx = array_search('roles', $select);
+        if ($r_idx) {
+            unset($select[$r_idx]);
+            $role = true;
+        }
 
-        $users = UserModel::whereBetween('id', [$args['from'], $args['to']])
+        $users = UserModel::select($select)->whereBetween('id', [$args['from'], $args['to']])
+            ->when($role, function ($query) {
+                return $query->with(['roles', 'roles.users']);
+            })
             ->get()->transform(function ($items, $item) {
                 $items = $items->toArray();
-                $fields = array();
-                foreach ($items as $item => $value) {
-                    $name = ToCamelCase($item);
-                    $fields[$name] = $value;
-                }
-                $fields['isEnabled'] = $items['flag_enabled'];
-                $fields['isVerified'] = $items['flag_verified'];
-                return $fields;
+                $map = array_flip(self::$map);
+                return self::renameKeys($items, $map);
             });
+
+        // error_log(print_r($users, true));
 
         return $users;
     }

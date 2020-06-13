@@ -8,5 +8,8 @@ return [
                 'POST'
             ]
         ]
-    ]
+    ],
+    'debug' => [
+        'queries' => true,
+    ],
 ];

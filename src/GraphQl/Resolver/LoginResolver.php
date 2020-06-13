@@ -12,10 +12,7 @@ namespace UserFrosting\Sprinkle\GraphQlApi\GraphQl\Resolver;
 use UserFrosting\Sprinkle\GraphQlApi\Controller\ApiController;
 use UserFrosting\Sprinkle\GraphQl\GraphQl\Resolver\Resolver;
 
-/**
- * GraphQL User type definition.
- *
- */
+
 class LoginResolver extends Resolver
 {
 

@@ -13,39 +13,56 @@ use UserFrosting\Sprinkle\GraphQlApi\Authenticate\Exception\AuthExpiredException
 use UserFrosting\Sprinkle\Account\Database\Models\User as UserModel;
 use UserFrosting\Sprinkle\GraphQl\GraphQl\Resolver\Resolver;
 
-/**
- * GraphQL User type definition.
- *
- */
+
 class UserResolver extends Resolver
 {
-    public static function resolve($source, $args, $context, $info)
+    public static function resolve($value, $args, $context, $info)
     {
-        // $t = new GraphQlController();
         if (!$context['auth']->check()) {
             throw new AuthExpiredException();
         }
-        error_log('resolve');
 
-        // $user = UserModel::select('id', 'first_name')->where('id', $args['id'])->get()[0];
-        $user = UserModel::where('id', $args['id'])
-            ->get()
-            ->first();
-
-        $fields = [
-            'id' => $user->id,
-            'userName' => $user->user_name,
-            'firstName' => $user->first_name,
-            'lastName' => $user->last_name,
-            'email' => $user->email,
-            'locale' => $user->locale,
-            'groupId' => $user->group_id,
-            'isVerified' => $user->flag_verified,
-            'isEnabled' => $user->flag_enabled,
-            'created' => $user->created_at,
-            'lastUpdated' => $user->updated_at,
-            'deleted' => $user->deleted_at,
+        self::$map = [
+            'userName' => 'user_name',
+            'firstName' => 'first_name',
+            'lastName'  => 'last_name',
+            'createdAt' => 'created_at',
+            'deletedAt' => 'deleted_at',
+            'isEnabled' => 'flag_enabled',
+            'isVerified' => 'flag_verified',
+            'groupId' => 'group_id',
+            'lastUpdated' => 'updated_at'
         ];
-        return $fields;
+
+        //Stores the selected fields form the query.
+        $selectedFields = $info->getFieldSelection();
+
+        //Stores SELECT fields for DB query.
+        $select = array();
+        foreach (self::renameKeys($selectedFields, self::$map) as $key => $value) {
+            array_push($select, $key);
+        }
+
+        //Temporary hack to remove 'roles' from main select fields and only query relation if required :(
+        $role = false;
+        $r_idx = array_search('roles', $select);
+        if ($r_idx) {
+            unset($select[$r_idx]);
+            $role = true;
+        }
+
+        $user = UserModel::select($select)->where('id', $args['id'])
+            ->when($role, function ($query) {
+                return $query->with(['roles', 'roles.users']);
+            })
+            ->get()->transform(function ($items, $item) {
+                $items = $items->toArray();
+                $map = array_flip(self::$map);
+                return self::renameKeys($items, $map);
+            })->first();
+
+        // error_log(print_r($user, true));
+
+        return $user;
     }
 }

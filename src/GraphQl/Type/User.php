@@ -26,30 +26,24 @@ class User extends ObjectType
         $user = [
             'name' => 'User',
             'description' => 'User',
-            'fields' => [
-                'id' => TR::id(),
-                'userName' => TR::string(),
-                'firstName' => TR::string(),
-                'lastName' => TR::string(),
-                'email' => TR::string(),
-                'locale' => TR::string(),
-                'groupId' => TR::int(),
-                'isVerified' => TR::boolean(),
-                'isEnabled' => TR::boolean(),
-                'createdAt' => TR::string(),
-                'lastUpdated' => TR::string(),
-                'deletedAt' => TR::string(),
-            ],
-            'resolveField' => function ($user, $args, $context, ResolveInfo $info) {
-                // error_log('resolveField');
-                // error_log(print_r($user, true));
-                switch ($info->fieldName) {
-                    case 'emailf':
-                        return 'email';
-                    default:
-                        return $user[$info->fieldName];
-                }
-            }
+            'fields' => function () {
+                return [
+                    'id' => TR::id(),
+                    'userName' => TR::string(),
+                    'firstName' => TR::string(),
+                    'lastName' => TR::string(),
+                    'email' => TR::string(),
+                    'locale' => TR::string(),
+                    'groupId' => TR::int(),
+                    'isVerified' => TR::boolean(),
+                    'isEnabled' => TR::boolean(),
+                    'createdAt' => TR::string(),
+                    'lastUpdated' => TR::string(),
+                    'deletedAt' => TR::string(),
+                    'roles' => TR::listOf(TR::role())
+                ];
+            },
+
         ];
         parent::__construct($user);
     }
