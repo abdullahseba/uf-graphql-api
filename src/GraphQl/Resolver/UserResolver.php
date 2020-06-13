@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API Sprinkle
  *
@@ -8,12 +9,8 @@
 
 namespace UserFrosting\Sprinkle\GraphQlApi\GraphQl\Resolver;
 
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
-use UserFrosting\Sprinkle\GraphQl\Authenticate\Exception\AuthExpiredException;
+use UserFrosting\Sprinkle\GraphQlApi\Authenticate\Exception\AuthExpiredException;
 use UserFrosting\Sprinkle\Account\Database\Models\User as UserModel;
-use UserFrosting\Sprinkle\GraphQl\Controller\GraphQlController;
-
 use UserFrosting\Sprinkle\GraphQl\GraphQl\Resolver\Resolver;
 
 /**
@@ -28,6 +25,7 @@ class UserResolver extends Resolver
         if (!$context['auth']->check()) {
             throw new AuthExpiredException();
         }
+        error_log('resolve');
 
         // $user = UserModel::select('id', 'first_name')->where('id', $args['id'])->get()[0];
         $user = UserModel::where('id', $args['id'])
@@ -47,7 +45,6 @@ class UserResolver extends Resolver
             'created' => $user->created_at,
             'lastUpdated' => $user->updated_at,
             'deleted' => $user->deleted_at,
-            'con' => $context['current_user']
         ];
         return $fields;
     }

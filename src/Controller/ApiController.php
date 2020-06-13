@@ -6,15 +6,53 @@ use UserFrosting\Sprinkle\Core\Controller\SimpleController;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\ServerSideValidator;
+use UserFrosting\Sprinkle\GraphQl\GraphQl\Schema;
+use GraphQL\GraphQL;
+
 
 
 class ApiController extends SimpleController
 {
-  public function test()
+  //Main API endpoint.
+  public function Api($request)
   {
-    return 'test';
+    // Get submitted data.
+    $params = $request->getParsedBody();
+
+    //Get the GraphQL query.  Not the same as the query root type.
+    $query = $params['query'];
+    $debug = true;
+    try {
+      $result = GraphQL::executeQuery(
+        Schema::$schema,
+        $query,
+        $rootValue = null,
+        $context = [
+          'current_user' => $this->ci->currentUser,
+          'auth' => $this->ci->authenticator,
+          'ci' => $this->ci
+        ],
+      );
+      $output = $result->toArray($debug);
+      //Simple error message implementation.
+    } catch (\Exception $e) {
+      $output = [
+        'errors' => [
+          [
+            'message' => $e->getMessage()
+          ]
+        ]
+      ];
+    }
+    //Return output as JSON.
+    return json_encode($output);
   }
 
+  public function logOut()
+  {
+    $this->ci->authenticator->logout();
+    return true;
+  }
 
   public function login($userName, $password)
   {

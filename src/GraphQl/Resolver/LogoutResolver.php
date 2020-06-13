@@ -16,7 +16,7 @@ use UserFrosting\Sprinkle\GraphQl\GraphQl\Resolver\Resolver;
  * GraphQL User type definition.
  *
  */
-class LoginResolver extends Resolver
+class LogoutResolver extends Resolver
 {
 
     public static function resolve($source, $args, $context, $info)
@@ -24,7 +24,7 @@ class LoginResolver extends Resolver
 
         try {
             $con = new ApiController($context['ci']);
-            return  $con->login($args['userName'], $args['password']);
+            return  $con->logout();
         } catch (\Throwable $th) {
             error_log($th);
         }
