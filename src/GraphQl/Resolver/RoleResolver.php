@@ -10,11 +10,11 @@
 namespace UserFrosting\Sprinkle\GraphQlApi\GraphQl\Resolver;
 
 use UserFrosting\Sprinkle\GraphQlApi\Authenticate\Exception\AuthExpiredException;
-use UserFrosting\Sprinkle\Account\Database\Models\User as UserModel;
+use UserFrosting\Sprinkle\Account\Database\Models\Role as RoleModel;
 use UserFrosting\Sprinkle\GraphQl\GraphQl\Resolver\Resolver;
 
 
-class UserResolver extends Resolver
+class RoleResolver extends Resolver
 {
     public static function resolve($value, $args, $context, $info)
     {
@@ -22,6 +22,7 @@ class UserResolver extends Resolver
             throw new AuthExpiredException();
         }
 
+        //Only used for 'users' relation.
         self::$map = [
             'userName' => 'user_name',
             'firstName' => 'first_name',
@@ -43,17 +44,17 @@ class UserResolver extends Resolver
             array_push($select, $key);
         }
 
-        //Temporary hack to remove 'roles' from main select fields and only query relation if required :(
+        //Temporary hack to remove 'users' from main select fields and only query relation if required :(
         $role = false;
-        $r_idx = array_search('roles', $select);
+        $r_idx = array_search('users', $select);
         if ($r_idx) {
             unset($select[$r_idx]);
             $role = true;
         }
 
-        $user = UserModel::select($select)->where('id', $args['id'])
+        $role = RoleModel::select($select)->where('id', $args['id'])
             ->when($role, function ($query) {
-                return $query->with(['roles', 'roles.users']);
+                return $query->with(['users', 'users.roles']);
             })
             ->get()->transform(function ($items, $item) {
                 $items = $items->toArray();
@@ -61,6 +62,6 @@ class UserResolver extends Resolver
                 return self::renameKeys($items, $map);
             })->first();
 
-        return $user;
+        return $role;
     }
 }

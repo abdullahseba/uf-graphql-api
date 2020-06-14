@@ -18,7 +18,6 @@ class LoginResolver extends Resolver
 
     public static function resolve($source, $args, $context, $info)
     {
-
         try {
             $con = new ApiController($context['ci']);
             return  $con->login($args['userName'], $args['password']);

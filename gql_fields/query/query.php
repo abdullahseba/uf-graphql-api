@@ -14,7 +14,7 @@ return [
     ],
     'users' => [
         'type' => TR::ListOf(TR::user()),
-        'description' => 'Returns a range of users',
+        'description' => 'Returns a collection of users between the specified IDs',
         'args' => [
             'from' => [
                 'type' => TR::nonNull(TR::id()),
@@ -27,5 +27,31 @@ return [
 
         ],
         'resolve' => "UserFrosting\Sprinkle\GraphQlApi\GraphQl\Resolver\UsersResolver::resolve"
+
+    ],
+    'role' => [
+        'type' => TR::role(),
+        'description' => 'Returns a role by id',
+        'args' => [
+            'id' => TR::nonNull(TR::id())
+        ],
+        'resolve' => "UserFrosting\Sprinkle\GraphQlApi\GraphQl\Resolver\RoleResolver::resolve"
+    ],
+    'roles' => [
+        'type' => TR::ListOf(TR::role()),
+        'description' => 'Returns a collection of roles between the specified IDs',
+        'args' => [
+            'from' => [
+                'type' => TR::nonNull(TR::id()),
+                'description' => 'Start of id range',
+            ],
+            'to' =>  [
+                'type' => TR::nonNull(TR::id()),
+                'description' => 'End of id range',
+            ],
+
+        ],
+        'resolve' => "UserFrosting\Sprinkle\GraphQlApi\GraphQl\Resolver\RolesResolver::resolve"
+
     ],
 ];

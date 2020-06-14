@@ -39,8 +39,8 @@ class UsersResolver extends Resolver
         //Stores the selected fields form the query.
         $selectedFields = $info->getFieldSelection();
 
-        //Stores SELECT fields for DB query.
-        $select = array();
+        //Stores SELECT fields for DB query.  ID required at minimum.
+        $select = array('id');
         foreach (self::renameKeys($selectedFields, self::$map) as $key => $value) {
             array_push($select, $key);
         }
@@ -63,7 +63,7 @@ class UsersResolver extends Resolver
                 return self::renameKeys($items, $map);
             });
 
-        // error_log(print_r($users, true));
+        // error_log(print_r($user, true));
 
         return $users;
     }

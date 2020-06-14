@@ -18,7 +18,6 @@ class LogoutResolver extends Resolver
 
     public static function resolve($source, $args, $context, $info)
     {
-
         try {
             $con = new ApiController($context['ci']);
             return  $con->logout();

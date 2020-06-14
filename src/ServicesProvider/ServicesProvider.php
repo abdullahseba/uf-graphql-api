@@ -5,7 +5,7 @@ namespace UserFrosting\Sprinkle\GraphQlApi\ServicesProvider;
 class ServicesProvider
 {
   /**
-   * Register api services.
+   * Registers api services.
    *
    * @param Container $container A DI container implementing ArrayAccess and container-interop.
    */
