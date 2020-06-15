@@ -2,7 +2,7 @@
 
 ## \*\*\*NOT SUITABLE FOR PRODUCTION\*\*\*
 
-This sprinkle adds a GraphQL HTTP API to Userfrosting.  The [GraphQL Sprinkle](https://github.com/abdullahseba/uf-graphql) is required for this sprinkle to work.  This is sprinkle is intended to demonstrate how GraphQL could be implemented in Userforsting.  It is not suitable for production use.
+This sprinkle adds a GraphQL HTTP API to Userfrosting.  The [GraphQL Sprinkle](https://github.com/abdullahseba/uf-graphql) is required for this sprinkle to work.  It is intended to demonstrate how GraphQL could be implemented in Userforsting and is not suitable for production use.
 
 ### Browsing the API
 
