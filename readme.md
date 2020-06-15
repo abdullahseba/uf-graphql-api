@@ -6,7 +6,7 @@ This sprinkle adds a GraphQL HTTP API to Userfrosting.  The [GraphQL Sprinkle](h
 
 ### Browsing the API
 
-The most convenient way to browse the API is by using the [GraphiQL](https://chrome.google.com/webstore/detail/chromeiql/fkkiamalmpiidkljmicmjfbieiclmeij) Chrome plugin.  Expand the 'docs' sidebar on the left-hand side to browse available types and queries.
+The most convenient way to browse the API is by using the [GraphiQL](https://chrome.google.com/webstore/detail/chromeiql/fkkiamalmpiidkljmicmjfbieiclmeij) Chrome plugin.  Expand the 'docs' sidebar on the right-hand side to browse available types and queries.
 
 Currently, only the following queries and mutation are available:
  **Queries:**
