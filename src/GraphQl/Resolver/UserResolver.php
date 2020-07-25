@@ -33,7 +33,9 @@ class UserResolver extends Resolver
             'groupId' => 'group_id',
             'lastUpdated' => 'updated_at'
         ];
+        // $t = $info->lookAhead();
 
+        // error_log(print_r($t, true));
         //Stores the selected fields form the query.
         $selectedFields = $info->getFieldSelection();
 

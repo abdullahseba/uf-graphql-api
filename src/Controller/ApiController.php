@@ -9,18 +9,33 @@ use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\Sprinkle\GraphQl\GraphQl\Schema;
 use GraphQL\GraphQL;
 
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 
 class ApiController extends SimpleController
 {
+  //ApiPreflight
+  public function ApiPreflight(ServerRequestInterface $request,  $response)
+  {
+    return $response
+      ->withHeader('Access-Control-Allow-Origin', 'http://192.168.1.114:8080')
+      ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Origin, Authorization')
+      ->withHeader('Access-Control-Allow-Credentials', 'true');
+  }
+
   //Main API endpoint.
-  public function Api($request)
+  public function Api(ServerRequestInterface $request,  $response)
   {
     // Get submitted data.
-    $params = $request->getParsedBody();
+    // $params = $request->getParsedBody();
+    $params = json_decode($request->getBody()->getContents());
 
     //Get the GraphQL query.  Not the same as the query root type.
-    $query = $params['query'];
+    $variables = [];
+    $query = [];
+    $query = $params->query;
+    $variables = $params->variables;
     $debug = true;
     try {
       $result = GraphQL::executeQuery(
@@ -32,6 +47,7 @@ class ApiController extends SimpleController
           'auth' => $this->ci->authenticator,
           'ci' => $this->ci
         ],
+        $variableValues = (array) $variables
       );
       $output = $result->toArray($debug);
       //Simple error message implementation.
@@ -44,8 +60,10 @@ class ApiController extends SimpleController
         ]
       ];
     }
-    //Return output as JSON.
-    return json_encode($output);
+
+    return $response->withJson($output, 200)->withHeader('Access-Control-Allow-Origin', 'http://192.168.1.114:8080')
+      ->withHeader('Access-Control-Allow-Credentials', 'true')
+      ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Origin, Authorization');
   }
 
   public function logOut()
